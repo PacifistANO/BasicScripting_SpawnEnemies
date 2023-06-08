@@ -2,18 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEditor;
+
+[RequireComponent(typeof(Transform))]
+[RequireComponent(typeof(Enemy))]
 
 public class CreateEnemies : MonoBehaviour
 {
     [SerializeField] private Transform _spawn;
-    [SerializeField] private GameObject _enemy;
+    [SerializeField] private Enemy _enemy;
 
     private Transform[] _spawns;
-    private int _spawnTime = 2;
     private int _currentSpawn = 0;
-    private float _spawnInterval;
+    private int _countEnemies;
+    private float _maxCountEnemies = 6;
+    private bool isSpawn;
+    private Coroutine _spawnCoroutine;
 
-    void Awake()
+    private void Awake()
     {
         _spawns = new Transform[_spawn.childCount];
 
@@ -22,23 +28,42 @@ public class CreateEnemies : MonoBehaviour
             _spawns[i] = _spawn.GetChild(i);
         }
 
-        Instantiate(_enemy, new Vector2(_spawns[_currentSpawn].localPosition.x, _spawns[_currentSpawn].localPosition.y), Quaternion.identity);
-        _currentSpawn++;
+        isSpawn = true;
+        _spawnCoroutine = StartCoroutine(SpawnEnemies());
     }
 
-    void Update()
+    private IEnumerator SpawnEnemies()
     {
-        _spawnInterval += Time.deltaTime;
+        var spawnTime = new WaitForSeconds(2f);
 
-        if(_spawnInterval >= _spawnTime && _currentSpawn < _spawn.childCount)
+        while (_countEnemies < _maxCountEnemies)
         {
-            Instantiate(_enemy, new Vector2(_spawns[_currentSpawn].localPosition.x, _spawns[_currentSpawn].localPosition.y), Quaternion.identity);
-            _currentSpawn++;
-            _spawnInterval = 0;
-
-            if (_currentSpawn == _spawn.childCount)
+            if (_currentSpawn < _spawn.childCount)
             {
-                _currentSpawn = 0;
+                Instantiate(_enemy, new Vector2(_spawns[_currentSpawn].localPosition.x, _spawns[_currentSpawn].localPosition.y), Quaternion.identity);
+                _currentSpawn++;
+                _countEnemies++;
+
+                if (_currentSpawn == _spawn.childCount)
+                {
+                    _currentSpawn = 0;
+                }
+
+                yield return spawnTime;
+            }
+        }
+
+        isSpawn = false;
+    }
+
+    private void Update()
+    {
+        if (_spawnCoroutine != null)
+        {
+            if (!isSpawn)
+            {
+                StopCoroutine(SpawnEnemies());
+                _spawnCoroutine = null;
             }
         }
     }
