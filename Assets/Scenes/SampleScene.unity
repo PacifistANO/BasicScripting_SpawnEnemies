@@ -404,7 +404,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spawn: {fileID: 68422104}
-  _enemy: {fileID: 945337877348739063, guid: 606be6cbe8ad6a842b8fc173c1881d42, type: 3}
+  _enemy: {fileID: -7320010940719989773, guid: 606be6cbe8ad6a842b8fc173c1881d42, type: 3}
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0

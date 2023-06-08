@@ -7,7 +7,7 @@ using UnityEditor;
 [RequireComponent(typeof(Transform))]
 [RequireComponent(typeof(Enemy))]
 
-public class CreateEnemies : MonoBehaviour
+public class CreatingEnemies : MonoBehaviour
 {
     [SerializeField] private Transform _spawn;
     [SerializeField] private Enemy _enemy;
@@ -16,10 +16,9 @@ public class CreateEnemies : MonoBehaviour
     private int _currentSpawn = 0;
     private int _countEnemies;
     private float _maxCountEnemies = 6;
-    private bool isSpawn;
     private Coroutine _spawnCoroutine;
 
-    private void Awake()
+    private void Start()
     {
         _spawns = new Transform[_spawn.childCount];
 
@@ -28,7 +27,6 @@ public class CreateEnemies : MonoBehaviour
             _spawns[i] = _spawn.GetChild(i);
         }
 
-        isSpawn = true;
         _spawnCoroutine = StartCoroutine(SpawnEnemies());
     }
 
@@ -49,21 +47,12 @@ public class CreateEnemies : MonoBehaviour
                     _currentSpawn = 0;
                 }
 
+                if (_countEnemies == _maxCountEnemies)
+                {
+                    StopCoroutine(_spawnCoroutine);
+                }
+
                 yield return spawnTime;
-            }
-        }
-
-        isSpawn = false;
-    }
-
-    private void Update()
-    {
-        if (_spawnCoroutine != null)
-        {
-            if (!isSpawn)
-            {
-                StopCoroutine(SpawnEnemies());
-                _spawnCoroutine = null;
             }
         }
     }
