@@ -7,11 +7,12 @@ using System;
 
 public class CreatingEnemies : MonoBehaviour
 {
-    [SerializeField] private Enemy _enemy;
+    [SerializeField] private Enemy _enemyPrefab;
 
     private int _countEnemies;
     private float _maxCountEnemies = 10;
     private Coroutine _spawnCoroutine;
+    private int[] _direction = { -1, 1 };
 
     private void Start()
     {
@@ -24,9 +25,9 @@ public class CreatingEnemies : MonoBehaviour
 
         while (_countEnemies < _maxCountEnemies)
         {
-            Transform spawn = transform.GetChild(UnityEngine.Random.Range(0, transform.childCount));
-            Enemy newEnemy = Instantiate(_enemy, new Vector2(spawn.transform.localPosition.x, spawn.localPosition.y), Quaternion.identity);
-            newEnemy.GetComponent<SpriteRenderer>().flipX = Convert.ToBoolean(UnityEngine.Random.Range(0, 2));
+            Transform spawnPoint = transform.GetChild(UnityEngine.Random.Range(0, transform.childCount));
+            Enemy newEnemy = Instantiate(_enemyPrefab, new Vector2(spawnPoint.localPosition.x, spawnPoint.localPosition.y), Quaternion.identity);
+            newEnemy.GetComponent<EnemyMover>().SetDirection(_direction[UnityEngine.Random.Range(0,_direction.Length)]);
             _countEnemies++;
 
             if (_countEnemies == _maxCountEnemies)

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,7 @@ public class EnemyMover : MonoBehaviour
 {
     private SpriteRenderer _spriteRenderer;
     private int _speed = 2;
+    private Vector2 _direction;
 
     private void Start()
     {
@@ -16,9 +18,12 @@ public class EnemyMover : MonoBehaviour
 
     private void Update()
     {
-        if (_spriteRenderer.flipX == false)
-            transform.Translate(Vector2.right * Time.deltaTime * _speed, Space.Self);
-        else
-            transform.Translate(Vector2.left * Time.deltaTime * _speed, Space.Self);
+        transform.Translate(_direction * _speed * Time.deltaTime);
+        _spriteRenderer.flipX = _direction.x < 0;
+    }
+
+    public void SetDirection(int direction)
+    {
+        _direction.x = direction;
     }
 }
